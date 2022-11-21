@@ -19,6 +19,8 @@ if (isset($_POST['verification'])) {
             $insertcode = $db->prepare("INSERT INTO `recuperation_mdp`(email, code) VALUES (?, ?)");
             $insertcode->execute([$email, $code]);
         }
+    }else{
+        $error = "Aucun compte lié à cette adresse mail";
     }
 }
 

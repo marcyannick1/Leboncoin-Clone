@@ -1,16 +1,22 @@
 <?php
+session_start();
 include_once("config/PDO.php");
 
 if (isset($_POST['connexion'])) {
     $email = htmlspecialchars($_POST['email']);
     $password = $_POST['password'];
 
-    $stmt = $db->prepare("SELECT password FROM `users` WHERE email = ?");
+    $stmt = $db->prepare("SELECT password, username FROM `users` WHERE email = ?");
     $stmt->execute([$email]);
 
-    $password_hash = $stmt->fetchColumn();
+    $data = $stmt->fetch();
+
+    $username = $data['username'];
+    $password_hash = $data['password'];
 
     if (password_verify($password, $password_hash)) {
+        $_SESSION['email'] = $email;
+        $_SESSION['username'] = $username;
         header("location: index.php");
     } else {
         $error = "Identifiant ou mot de passe incorrect";
