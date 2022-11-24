@@ -56,7 +56,7 @@ if (isset($_POST['code-verif'])) {
     if (!isset($userexist)) :
     ?>
         <form action="" method="post">
-            <input type="email" name="email-recup" id="email" placeholder="Entrez votre e-mail" required>
+            <input type="email" name="email-recup" id="email-recup" placeholder="Entrez votre e-mail" value="<?php if (isset($email)) {echo $email;} ?>">
             <button type="submit" name="verification">Verification</button>
         </form>
     <?php

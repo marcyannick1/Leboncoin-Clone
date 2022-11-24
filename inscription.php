@@ -1,5 +1,6 @@
 <?php
 include_once("config/PDO.php");
+session_start();
 
 if (isset($_POST['inscription'])) {
     $user_name = htmlspecialchars($_POST['username']);
@@ -18,6 +19,9 @@ if (isset($_POST['inscription'])) {
         $error = "L'email existe déja";
     }
 }
+if(isset($_SESSION['email-logged'])){
+    header('location: index.php');
+}
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -31,11 +35,12 @@ if (isset($_POST['inscription'])) {
 
 <body>
     <form action="" method="post">
+        <input type="email" name="email" id="email" placeholder="E-mail" value="<?php if (isset($email)) {echo $email;} ?>">
         <input type="text" name="username" id="username" placeholder="Nom">
-        <input type="email" name="email" id="email" placeholder="E-mail">
         <input type="password" name="password" id="password" placeholder="Mot de passe">
         <button type="submit" name="inscription">Inscription</button>
     </form>
+    <a href="connexion.php">Se connecter</a>
     <?php if (isset($error)) : ?>
         <span><?= $error ?></span>
     <?php endif ?>
