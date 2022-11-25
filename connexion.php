@@ -6,15 +6,17 @@ if (isset($_POST['connexion'])) {
     $email = htmlspecialchars($_POST['email']);
     $password = $_POST['password'];
 
-    $stmt = $db->prepare("SELECT password, username FROM `users` WHERE email = ?");
+    $stmt = $db->prepare("SELECT * FROM `users` WHERE email = ?");
     $stmt->execute([$email]);
 
     $data = $stmt->fetch();
-
+    
+    $user_id = $data['user_id'];
     $username = $data['username'];
     $password_hash = $data['password'];
 
     if (password_verify($password, $password_hash)) {
+        $_SESSION['user_id-logged'] = $user_id;
         $_SESSION['email-logged'] = $email;
         $_SESSION['username-logged'] = $username;
         header("location: index.php");
