@@ -15,12 +15,16 @@ if (isset($_POST['connexion'])) {
     $password_hash = $data['password'];
 
     if (password_verify($password, $password_hash)) {
-        $_SESSION['email'] = $email;
-        $_SESSION['username'] = $username;
+        $_SESSION['email-logged'] = $email;
+        $_SESSION['username-logged'] = $username;
         header("location: index.php");
     } else {
         $error = "Identifiant ou mot de passe incorrect";
     }
+}
+
+if(isset($_SESSION['email-logged'])){
+    header('location: index.php');
 }
 ?>
 <!DOCTYPE html>
@@ -38,6 +42,7 @@ if (isset($_POST['connexion'])) {
         <input type="email" name="email" id="email" placeholder="E-mail" value="<?php if (isset($email)) {echo $email;} ?>">
         <input type="password" name="password" id="password" placeholder="Mot de passe">
         <button type="submit" name="connexion">Connexion</button>
+        <a href="inscription.php">S'inscrire</a><br>
         <a href="password_reset.php">Mot de passe oublié</a>
     </form>
     <?php if (isset($error)) : ?>

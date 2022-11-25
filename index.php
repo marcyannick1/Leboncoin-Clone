@@ -1,18 +1,16 @@
 <?php
 session_start();
-if(isset($_SESSION['username'])){
-    echo ("Bonjour ".$_SESSION['username']);
+
+echo "Leboncoin<br><br>";
+
+if(isset($_SESSION['username-logged'])){
+    echo ("Bonjour ".$_SESSION['username-logged']);
+    echo ('
+    <br>
+    <a href="deconnexion.php">Déconnexion</a>');
+}else{
+    echo('
+    <a href="connexion.php">Se connecter</a>');
 }
-
-echo "<br>Leboncoin";
-
-echo ('
-    <br>
-    <a href="connexion.php">Connexion</a>
-    <br>
-    <a href="inscription.php">Inscription</a>
-    <br>
-    <a href="deconnexion.php">Déconnexion</a>
-')
 
 ?>
