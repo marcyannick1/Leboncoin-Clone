@@ -10,10 +10,10 @@ if(isset($_SESSION['username-logged'])){
             $prix = $_POST['prix'];
             $categorie = $_POST['categorie'];
 
-            $categorie_id = "SELECT `categorie_id` FROM `categories` WHERE titre = '$categorie'";
+            $categorie_id = "SELECT `categorie_id` FROM `categories` WHERE categorie_titre = '$categorie'";
             $user_id = $_SESSION['user_id-logged'];
 
-            $stmt = $db->prepare("INSERT INTO `annonces`(`titre`, `description`, `prix`, `annonce_date`, `categories_categorie_id`, `users_user_id`) VALUES (?, ?, ?, now(), ($categorie_id), ?)");
+            $stmt = $db->prepare("INSERT INTO `annonces`(`annonce_titre`, `description`, `prix`, `annonce_date`, `categories_categorie_id`, `users_user_id`) VALUES (?, ?, ?, now(), ($categorie_id), ?)");
             $stmt->execute([$titre, $description, $prix, $user_id]);
 
             header('location: index.php');

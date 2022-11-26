@@ -15,19 +15,18 @@ if(isset($_SESSION['username-logged'])){
     <a href="connexion.php">Se connecter</a>');
 }
 
-$stmt = $db->prepare("
-SELECT annonce_id, annonces.titre, description, prix, annonce_date, categories.titre AS 'categorie', username, user_id
-FROM categories
-INNER JOIN annonces
-ON annonces.categories_categorie_id = categories.categorie_id
-INNER JOIN users
-ON annonces.users_user_id = users.user_id
-ORDER BY annonces.annonce_date DESC");
-$stmt->execute();
+$stmt = $db->query(
+    "SELECT annonce_id, annonce_titre, description, prix, annonce_date, categorie_titre, username, user_id
+    FROM annonces
+    INNER JOIN categories
+    ON annonces.categories_categorie_id = categories.categorie_id
+    INNER JOIN users
+    ON annonces.users_user_id = users.user_id
+    ORDER BY annonces.annonce_date DESC");
 
 $data = $stmt->fetchAll();
 
-// print_r($data);
+// echo '<pre>' , print_r($data) , '</pre>';
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -44,15 +43,16 @@ $data = $stmt->fetchAll();
     <br><br><span><?= $annonce['username'] ?></span><br><br>
     <a href="annonce.php?annonce_id=<?=$annonce['annonce_id']?>">
         <img src="images/annonces/annonce<?= $annonce['annonce_id']?>.jpg" width="200px"><br>
-        <span><?= $annonce['titre'] ?></span><br>
+        <span><?= $annonce['annonce_titre'] ?></span><br>
         <span><?= $annonce['prix'] ?> €</span><br>
         <span><?= $annonce['annonce_date'] ?></span><br><br>
     </a>
-    <span><?= $annonce['categorie'] ?></span><br><br>
+    <span><?= $annonce['categorie_titre'] ?></span><br><br>
         <?php
         if(isset($_SESSION['user_id-logged']) && $_SESSION['user_id-logged'] == $annonce['user_id']):
         ?>
         <a href="update_annonce.php?annonce_id=<?=$annonce['annonce_id']?>">Modifier</a>
+        <a href="delete_annonce.php?annonce_id=<?=$annonce['annonce_id']?>">Supprimer</a>
 
         <?php 
         endif
