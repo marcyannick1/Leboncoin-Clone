@@ -37,12 +37,31 @@ $data = $stmt->fetchAll();
     <title>Leboncoin</title>
 </head>
 <body>
+    <form action="recherche.php" method="get">
+        <select name="categorie" id="categorie">
+            <option value="">Choisir une catégorie</option>
+            <option value="Vehicules">Véhicules</option>
+            <option value="Immobilier">Immobilier</option>
+            <option value="Mode">Mode</option>
+            <option value="Maison">Maison</option>
+            <option value="Multimedia">Multimédia</option>
+            <option value="Loisirs">Loisirs</option>
+            <option value="Animaux">Animaux</option>
+            <option value="Materiels professionnel">Matériels Professionnel</option>
+            <option value="Divers">Divers</option>
+        </select>
+        <input type="text" name="text" id="recherche" placeholder="Que recherchez vous?">
+        <input type="number" name="prix_min" placeholder="Prix minimum">
+        <input type="number" name="prix_max" placeholder="Prix maximum">
+        <button type="submit">Recherche</button>
+    </form>
     <?php
     foreach ($data as $annonce):
     ?>
+    <hr>
     <br><br><span><?= $annonce['username'] ?></span><br><br>
     <a href="annonce.php?annonce_id=<?=$annonce['annonce_id']?>">
-        <img src="images/annonces/annonce<?= $annonce['annonce_id']?>.jpg" width="200px"><br>
+        <img src="images/annonces/annonce<?= $annonce['annonce_id']?>_1.jpg" width="200px"><br>
         <span><?= $annonce['annonce_titre'] ?></span><br>
         <span><?= $annonce['prix'] ?> €</span><br>
         <span><?= $annonce['annonce_date'] ?></span><br><br>

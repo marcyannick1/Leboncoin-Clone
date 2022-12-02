@@ -45,7 +45,17 @@ if(!empty($_GET['annonce_id'])){
     <h1><?=$titre?></h1>
     <span><?=$categorie?></span>
     <div>
-        <img src="images/annonces/annonce<?= $_GET['annonce_id']?>.jpg">
+        <?php
+        $select_img = $db -> prepare("SELECT nom FROM `photos` WHERE annonces_annonce_id = ?");
+        $select_img -> execute([$annonce_id]);
+        $images = $select_img -> fetchAll();
+
+        foreach ($images as $image):
+        ?>
+        <img src="images/annonces/<?=$image['nom']?>" width="300px">
+        <?php 
+        endforeach
+        ?>
     </div>
     <span><?=$prix?> €</span><br>
     <span><?=$annonce_date?></span>
