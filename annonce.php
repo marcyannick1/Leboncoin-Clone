@@ -7,8 +7,8 @@ if(!empty($_GET['annonce_id'])){
     
     $stmt = $db->prepare(
         "SELECT * FROM annonces
-        INNER JOIN users ON annonces.users_user_id	= users.user_id
-        INNER JOIN categories ON annonces.categories_categorie_id	= categories.categorie_id
+        INNER JOIN users ON annonces.users_user_id = users.user_id
+        INNER JOIN categories ON annonces.categories_categorie_id = categories.categorie_id
         WHERE annonce_id = ?");
 
     $stmt->execute([$annonce_id]);
@@ -45,7 +45,17 @@ if(!empty($_GET['annonce_id'])){
     <h1><?=$titre?></h1>
     <span><?=$categorie?></span>
     <div>
-        <img src="images/annonces/annonce<?= $_GET['annonce_id']?>.jpg">
+        <?php
+        $select_img = $db -> prepare("SELECT photo_nom FROM `photos` WHERE annonces_annonce_id = ?");
+        $select_img -> execute([$annonce_id]);
+        $images = $select_img -> fetchAll();
+
+        foreach ($images as $image):
+        ?>
+        <img src="images/annonces/<?=$image['photo_nom']?>" width="300px">
+        <?php 
+        endforeach
+        ?>
     </div>
     <span><?=$prix?> €</span><br>
     <span><?=$annonce_date?></span>
