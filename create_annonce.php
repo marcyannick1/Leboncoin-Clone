@@ -18,9 +18,17 @@ if(isset($_SESSION['username-logged'])){
 
             header('location: index.php');
 
+            // Ajout photos bdd et fichiers
             $lastid = $db->lastInsertId();
-            $path = "images/annonces/annonce".$lastid.".jpg";
-            move_uploaded_file($_FILES['photo']['tmp_name'], $path);
+
+            for ($i=0; $i < count($_FILES['photos']['tmp_name']); $i++) {
+                $name = "annonce".$lastid."_".($i+1).".jpg";
+                $path = "images/annonces/".$name;
+                move_uploaded_file($_FILES['photos']['tmp_name'][$i], $path);
+
+                $stmt = $db->prepare("INSERT INTO `photos`(`nom`, `annonces_annonce_id`) VALUES (?, ?)");
+                $stmt->execute([$name, $lastid]);
+            }
         }else{
             $error = "Veuillez remplir tout les champs";
         }
@@ -56,7 +64,7 @@ if(isset($_SESSION['username-logged'])){
         </select><br><br>
         <input type="number" name="prix" id="prix" placeholder="Prix">€<br><br>
         <!-- <input type="file" name="photo" id="photo" accept="image/jpeg, image/png, image/gif, image/heic, image/heif, image/tiff, image/webp" multiple><br><br> -->
-        <input type="file" name="photo" id="photo" accept="image/jpeg,"><br><br>
+        <input type="file" name="photos[]" id="photo" accept="image/jpeg" multiple><br><br>
         <button type="submit" name="annonce">Publier l'annonce</button>
     </form>
     <?php if (isset($error)) : ?>
