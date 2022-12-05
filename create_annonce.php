@@ -26,7 +26,7 @@ if(isset($_SESSION['username-logged'])){
                 $path = "images/annonces/".$name;
                 move_uploaded_file($_FILES['photos']['tmp_name'][$i], $path);
 
-                $stmt = $db->prepare("INSERT INTO `photos`(`nom`, `annonces_annonce_id`) VALUES (?, ?)");
+                $stmt = $db->prepare("INSERT INTO `photos`(`photo_nom`, `annonces_annonce_id`) VALUES (?, ?)");
                 $stmt->execute([$name, $lastid]);
             }
         }else{

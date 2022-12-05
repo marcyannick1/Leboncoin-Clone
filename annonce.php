@@ -41,37 +41,40 @@ if(!empty($_GET['annonce_id'])){
     <title>Document</title>
 </head>
 <body>
-    <span><?=$username?></span>
-    <h1><?=$titre?></h1>
-    <span><?=$categorie?></span>
-    <div>
+    <?php if(isset($data)): ?>
+        <span><?=$username?></span>
+        <h1><?=$titre?></h1>
+        <span><?=$categorie?></span>
+        <div>
+            <?php
+            $select_img = $db -> prepare("SELECT photo_nom FROM `photos` WHERE annonces_annonce_id = ?");
+            $select_img -> execute([$annonce_id]);
+            $images = $select_img -> fetchAll();
+
+            foreach ($images as $image):
+            ?>
+            <img src="images/annonces/<?=$image['photo_nom']?>" width="300px">
+            <?php 
+            endforeach
+            ?>
+        </div>
+        <span><?=$prix?> €</span><br>
+        <span><?=$annonce_date?></span>
+        <p><?=$description?></p>
+
         <?php
-        $select_img = $db -> prepare("SELECT photo_nom FROM `photos` WHERE annonces_annonce_id = ?");
-        $select_img -> execute([$annonce_id]);
-        $images = $select_img -> fetchAll();
-
-        foreach ($images as $image):
+        if(isset($_SESSION['user_id-logged']) && $annonce_user_id == $_SESSION['user_id-logged']):
         ?>
-        <img src="images/annonces/<?=$image['photo_nom']?>" width="300px">
-        <?php 
-        endforeach
+        <a href="">Voir Messages</a>
+        <?php
+        else:
         ?>
-    </div>
-    <span><?=$prix?> €</span><br>
-    <span><?=$annonce_date?></span>
-    <p><?=$description?></p>
-
-    <?php
-    if(isset($_SESSION['user_id-logged']) && $annonce_user_id == $_SESSION['user_id-logged']):
-    ?>
-    <a href="">Voir Messages</a>
-    <?php
-    else:
-    ?>
-    <a href="">Envoyer Message</a>
-    <?php
-    endif
-    ?>
-
+        <a href="reply.php?annonce_id=<?=$annonce_id?>">Message</a>
+        <?php
+        endif
+        ?>
+    <?php elseif (isset($error)) : ?>
+        <span><?= $error ?></span>
+    <?php endif ?>
 </body>
 </html>

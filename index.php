@@ -9,6 +9,7 @@ if(isset($_SESSION['username-logged'])){
     echo ('
     <br>
     <a href="create_annonce.php">Ajouter une annonce</a><br>
+    <a href="messages.php">Messages</a><br>
     <a href="deconnexion.php">Déconnexion</a>');
 }else{
     echo('
