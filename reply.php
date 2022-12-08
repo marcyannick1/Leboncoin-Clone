@@ -4,6 +4,7 @@ include_once("config/PDO.php");
 
 if(!empty($_GET['annonce_id'])){
     $annonce_id = $_GET['annonce_id'];
+    isset($_SESSION['user_id-logged']) ? $user_id_logged = $_SESSION['user_id-logged'] : header('location: connexion.php');
     
     $stmt = $db->prepare(
         "SELECT * FROM annonces
@@ -13,9 +14,9 @@ if(!empty($_GET['annonce_id'])){
 
     $stmt->execute([$annonce_id]);
 
+    // Verification si l'annonce existe
     if($stmt->rowCount() == 1){
         $data = $stmt->fetch();
-        // echo '<pre>' , print_r($data) , '</pre>';
 
         $titre = $data['annonce_titre'];
         $description = $data['description'];
@@ -28,8 +29,27 @@ if(!empty($_GET['annonce_id'])){
         $error = "Cette annonce n'existe pas ou a été supprimée";
     }
 
+    // Verification du user qui envoie le msg
+    if($user_id_logged == $annonce_user_id){
+        header('location: messages.php?annonce_id='.$annonce_id);
+    }
+
+    // Verification si un message existe déja
+    $check_message = $db->prepare("SELECT * FROM `messages` WHERE annonces_annonce_id = ? AND expediteur_id = ?");
+    $check_message->execute([$annonce_id, $user_id_logged]);
+    if($check_message->rowCount() != 0){
+        header('location: messages.php?annonce_id='.$annonce_id);
+    }
+
 }else{
     header('location: index.php');
+}
+
+if(isset($_POST['send-message'])){
+    $message = $_POST['message'];
+    $stmt = $db->prepare("INSERT INTO `messages`(`message`, `message_date`, `annonces_annonce_id`, `expediteur_id`, `destinataire_id`) VALUES (?, now(), ?, ?, ?)");
+    $stmt->execute([$message, $annonce_id, $user_id_logged, $annonce_user_id]);
+    header('location: annonce.php?annonce_id='.$annonce_id);
 }
 ?>
 <!DOCTYPE html>
@@ -42,28 +62,10 @@ if(!empty($_GET['annonce_id'])){
 </head>
 <body>
     <?php if(isset($data)): ?>
-        <span><?=$username?></span>
-        <h1><?=$titre?></h1>
-        <span><?=$categorie?></span>
-        <div>
-            <?php
-            $select_img = $db -> prepare("SELECT photo_nom FROM `photos` WHERE annonces_annonce_id = ?");
-            $select_img -> execute([$annonce_id]);
-            $images = $select_img -> fetchAll();
-
-
-            foreach ($images as $image):
-            ?>
-            <img src="images/annonces/<?=$image['photo_nom']?>" width="300px">
-            <?php 
-            endforeach
-            ?>
-        </div>
-        <span><?=$prix?> €</span><br>
-        <span><?=$annonce_date?></span>
-        <p><?=$description?></p>
-        
-        <a href="reply.php?annonce_id=<?=$annonce_id?>">Message</a>
+        <form action="" method="post">
+            <textarea name="message" id="message" placeholder="Bonjour cette annonce est disponible ?"></textarea><br>
+            <button type="submit" name="send-message">Envoyer</button>
+        </form>
     <?php elseif (isset($error)) : ?>
         <span><?= $error ?></span>
     <?php endif ?>
