@@ -61,18 +61,8 @@ if(!empty($_GET['annonce_id'])){
         <span><?=$prix?> €</span><br>
         <span><?=$annonce_date?></span>
         <p><?=$description?></p>
-
-        <?php
-        if(isset($_SESSION['user_id-logged']) && $annonce_user_id == $_SESSION['user_id-logged']):
-        ?>
-        <a href="">Voir Messages</a>
-        <?php
-        else:
-        ?>
+        
         <a href="reply.php?annonce_id=<?=$annonce_id?>">Message</a>
-        <?php
-        endif
-        ?>
     <?php elseif (isset($error)) : ?>
         <span><?= $error ?></span>
     <?php endif ?>

@@ -17,7 +17,6 @@ if(!empty($_GET['annonce_id'])){
     // Verification si l'annonce existe
     if($stmt->rowCount() == 1){
         $data = $stmt->fetch();
-    // echo '<pre>' , print_r($data) , '</pre>';
 
         $titre = $data['annonce_titre'];
         $description = $data['description'];
@@ -32,14 +31,14 @@ if(!empty($_GET['annonce_id'])){
 
     // Verification du user qui envoie le msg
     if($user_id_logged == $annonce_user_id){
-        header('location: annonce.php?annonce_id='.$annonce_id);
+        header('location: messages.php?annonce_id='.$annonce_id);
     }
 
     // Verification si un message existe déja
-    $check_message = $db->prepare("SELECT * FROM `messages` WHERE annonces_annonce_id = ? AND users_user_id = ?");
+    $check_message = $db->prepare("SELECT * FROM `messages` WHERE annonces_annonce_id = ? AND expediteur_id = ?");
     $check_message->execute([$annonce_id, $user_id_logged]);
     if($check_message->rowCount() != 0){
-        header('location: messages.php');
+        header('location: messages.php?annonce_id='.$annonce_id);
     }
 
 }else{
@@ -48,7 +47,7 @@ if(!empty($_GET['annonce_id'])){
 
 if(isset($_POST['send-message'])){
     $message = $_POST['message'];
-    $stmt = $db->prepare("INSERT INTO `messages`(`message`, `message_date`, `annonces_annonce_id`, `users_user_id`, `destinataire_id`) VALUES (?, now(), ?, ?, ?)");
+    $stmt = $db->prepare("INSERT INTO `messages`(`message`, `message_date`, `annonces_annonce_id`, `expediteur_id`, `destinataire_id`) VALUES (?, now(), ?, ?, ?)");
     $stmt->execute([$message, $annonce_id, $user_id_logged, $annonce_user_id]);
     header('location: annonce.php?annonce_id='.$annonce_id);
 }
