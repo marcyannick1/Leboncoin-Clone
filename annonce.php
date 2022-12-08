@@ -51,6 +51,7 @@ if(!empty($_GET['annonce_id'])){
             $select_img -> execute([$annonce_id]);
             $images = $select_img -> fetchAll();
 
+
             foreach ($images as $image):
             ?>
             <img src="images/annonces/<?=$image['photo_nom']?>" width="300px">
