@@ -43,29 +43,73 @@ if (isset($_POST['code-verif'])) {
 ?>
 <!DOCTYPE html>
 <html lang="fr">
-
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mot de passe oublié</title>
+<?php
+$page_title = "Mot de passe oublié";
+include_once('head.php');
+?>
+<link rel="stylesheet" href="styles/connexion.css">
+<link rel="stylesheet" href="styles/password.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
 </head>
-
 <body>
+<header>
+      <a href="<?=$_SERVER['HTTP_REFERER']?>">
+        <i class="fa-regular fa-arrow-left"></i>
+      </a>
+      <div class="center">
+        <img src="images/logo.png" alt="logo" class="logo" />
+        <i class="fa-thin fa-pipe"></i>
+        <div>
+          <i class="fa-solid fa-shield-check"></i>
+          <span>Mot de passe oublié</span>
+        </div>
+      </div>
+</header>
     <?php
     if (!isset($userexist)) :
     ?>
-        <form action="" method="post">
-            <input type="email" name="email-recup" id="email-recup" placeholder="Entrez votre e-mail" value="<?php if (isset($email)) {echo $email;} ?>">
-            <button type="submit" name="verification">Verification</button>
-        </form>
+        <div class="contenue">
+
+                <img src="images/im2.png" class="tt" alt="">
+
+            <div class="contient">
+                <div class="text">
+                    <h1>Mot de passe oublié</h1>
+                    <p>Entrez l'adresse e-mail associée à votre compte</p>
+                </div>
+                <form action="" method="post">
+                    <label for="email">E-mail <span>Champs requis</span></label>
+                    <input type="email" name="email-recup" id="email" placeholder="Entrez votre e-mail" required>
+                    <button type="submit" name="verification">Continuer</button>
+                </form>
+            </div>
+
+                <img src="images/im1.png" class="tt2   " alt="">
+
+        </div>
     <?php
     else :
     ?>
-        <form action="" method="post">
-            <input type="number" name="code" id="code" placeholder="Entrez votre code">
-            <button type="submit" name="code-verif">Code</button>
-        </form>
+            <div class="contenue">
+
+                <img src="images/im2.png" class="tt" alt="">
+
+                <div class="contient">
+                <div class="text">
+                    <h1>Mot de passe oublié</h1>
+                    <p>Entrez le code</p>
+                </div>
+                <form action="" method="post">
+                    <input type="number" name="code" id="code" placeholder="Entrez votre code">
+                    <button type="submit" name="code-verif">Code</button>
+                </form>
+                </div>
+
+                <img src="images/im1.png" class="tt2" alt="">
+
+            </div>
     <?php
     endif
     ?>

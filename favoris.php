@@ -2,24 +2,27 @@
 session_start();
 include_once("config/PDO.php");
 
-$stmt = $db->query(
-    "SELECT annonce_id, annonce_titre, description, prix, annonce_date, categorie_titre, username, user_id
-  FROM annonces
-  INNER JOIN categories
-  ON annonces.categories_categorie_id = categories.categorie_id
-  INNER JOIN users
-  ON annonces.users_user_id = users.user_id
-  ORDER BY annonces.annonce_date DESC"
-);
+$stmt = $db->prepare("
+SELECT * FROM favoris f
+INNER JOIN annonces a on a.annonce_id = f.annonces_annonce_id
+INNER JOIN users u on u.user_id = a.users_user_id
+INNER JOIN photos p on p.annonces_annonce_id = a.annonce_id
+INNER JOIN categories c on c.categorie_id = a.categories_categorie_id
+WHERE f.users_user_id = ?
+GROUP BY a.annonce_id
+");
+$stmt->execute([$_SESSION['user_id-logged']]);
 
-$data = $stmt->fetchAll();
+$favoris = $stmt->fetchAll();
+// echo '<pre>', print_r($favoris), '</pre>';
+
 ?>
 <!DOCTYPE html>
 <html lang="fr">
 
 <head>
     <?php
-    $page_title = "Leboncoin";
+    $page_title = "Favoris";
     include_once('head.php')
     ?>
     <link rel="stylesheet" href="styles/styles.css">
@@ -27,15 +30,31 @@ $data = $stmt->fetchAll();
 
 <body>
     <header>
-    <?php
-    include_once('navbar.php')
-    ?>
+        <?php
+        include_once('navbar.php')
+        ?>
     </header>
-    <main>
-        <div>
+    <main id="favoris">
+    <?php
+        $stmt = $db->prepare("SELECT * FROM favoris WHERE users_user_id = ?");
+        $stmt->execute([$_SESSION['user_id-logged']]);
+        if($stmt->rowCount()==0):
+    ?>
+    <div class="favoris_error">
+        <h2>Vous avez aucune annonce en favoris!</h2>
+        <img src="images/favoris2.png" alt="" srcset="" width="500">
+    </div>
+    <?php
+    else:
+    ?>
+    <h2>Vos favoris</h2>
+    <?php
+    endif
+    ?>
+    <div>
             <div class="annonces">
                 <?php
-                foreach ($data as $annonce) :
+                foreach ($favoris as $annonce) :
                 ?>
                     <div class="annonce">
                         <div class="user">
@@ -53,24 +72,20 @@ $data = $stmt->fetchAll();
                             </div>
                         </a>
                         <?php
-                        if(isset($_SESSION['user_id-logged'])):
-                            $stmt = $db->prepare("SELECT * FROM favoris WHERE annonces_annonce_id = ? AND users_user_id = ?");
-                            $stmt->execute([$annonce['annonce_id'], $_SESSION['user_id-logged']]);
-                            if($stmt->rowCount()==0):
-                            ?>
-                            <a href="add_favoris.php?annonce_id=<?=$annonce['annonce_id']?>">
-                                <i class="fa-regular fa-heart"></i>
-                            </a>
-                            <?php
-                            else:
-                            ?>
-                            <a href="add_favoris.php?annonce_id=<?=$annonce['annonce_id']?>">
-                                <i class="fa-solid fa-heart"></i>
-                            </a>
-                            <?php
-                            endif
-                            ?>
-                        <?php 
+                        $stmt = $db->prepare("SELECT * FROM favoris WHERE annonces_annonce_id = ? AND users_user_id = ?");
+                        $stmt->execute([$annonce['annonce_id'], $_SESSION['user_id-logged']]);
+                        if($stmt->rowCount()==0):
+                        ?>
+                        <a href="add_favoris.php?annonce_id=<?=$annonce['annonce_id']?>">
+                            <i class="fa-regular fa-heart"></i>
+                        </a>
+                        <?php
+                        else:
+                        ?>
+                        <a href="add_favoris.php?annonce_id=<?=$annonce['annonce_id']?>">
+                            <i class="fa-solid fa-heart"></i>
+                        </a>
+                        <?php
                         endif
                         ?>
                         <a href="chat.php?annonce_id=<?= $annonce['annonce_id'] ?>&user_id=<?= $annonce['user_id'] ?>">
@@ -90,7 +105,6 @@ $data = $stmt->fetchAll();
                 ?>
             </div>
     </main>
-    </div>
-
 </body>
+
 </html>

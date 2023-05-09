@@ -23,11 +23,11 @@ if(!empty($_GET['annonce_id'])){
         $annonce_date = $data['annonce_date'];
         $annonce_user_id = $data['user_id'];
         $username = $data['username'];
+        $user_id = $data['user_id'];
         $categorie = $data['categorie_titre'];
     }else{
         $error = "Cette annonce n'existe pas ou a été supprimée";
     }
-
 }else{
     header('location: index.php');
 }
@@ -35,43 +35,70 @@ if(!empty($_GET['annonce_id'])){
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+<?php
+$page_title = $titre;
+include_once('head.php');
+?>
+<link rel="stylesheet" href="styles/styles.css">
+<link rel="stylesheet" href="styles/annonce.css">
+<script src="js/carousel.js" defer></script>
 </head>
 <body>
-    <span><?=$username?></span>
-    <h1><?=$titre?></h1>
-    <span><?=$categorie?></span>
-    <div>
+    <header>
         <?php
-        $select_img = $db -> prepare("SELECT photo_nom FROM `photos` WHERE annonces_annonce_id = ?");
-        $select_img -> execute([$annonce_id]);
-        $images = $select_img -> fetchAll();
-
-        foreach ($images as $image):
+        include_once('navbar.php')
         ?>
-        <img src="images/annonces/<?=$image['photo_nom']?>" width="300px">
-        <?php 
-        endforeach
-        ?>
-    </div>
-    <span><?=$prix?> €</span><br>
-    <span><?=$annonce_date?></span>
-    <p><?=$description?></p>
+    </header>
+    <main id="annonce">
+        <section class="annonce">
+            <?php if(isset($data)): ?>
+                <div class="imgContainer">
+                    <?php
+                    $select_img = $db -> prepare("SELECT photo_nom FROM `photos` WHERE annonces_annonce_id = ?");
+                    $select_img -> execute([$annonce_id]);
+                    $images = $select_img -> fetchAll();
 
-    <?php
-    if(isset($_SESSION['user_id-logged']) && $annonce_user_id == $_SESSION['user_id-logged']):
-    ?>
-    <a href="">Voir Messages</a>
-    <?php
-    else:
-    ?>
-    <a href="">Envoyer Message</a>
-    <?php
-    endif
-    ?>
-
+                    foreach ($images as $image):
+                    ?>
+                    <img class="containerImg" src="images/annonces/<?=$image['photo_nom']?>" width="300px">
+                    <?php 
+                    endforeach
+                    ?>
+                    
+                    <?php
+                    if(count($images) != 1):
+                    ?>
+                    <div class="preceed">
+                        <i class="fa-solid fa-circle-arrow-left"></i>
+                    </div>
+                    <div class="next">
+                        <i class="fa-solid fa-circle-arrow-right"></i>
+                        <!-- <i class="fa-solid fa-circle-arrow-right"></i> -->
+                    </div>
+                    <?php
+                    endif
+                    ?>
+                </div>
+                <div class="annonce-infos">
+                    <div class="user">
+                        <i class="fa-solid fa-circle-user"></i>
+                        <span><?=$username?></span>
+                    </div>
+                    <h1><?=$titre?></h1>
+                    <span class="prix"><?=$prix?> €</span><br>
+                    <span class="categorie"><?=$categorie?></span><br>
+                    <span class="date"><?=$annonce_date?></span><br>
+        
+                    <br><h3>Description</h3>
+                    <p><?=$description?></p><br>
+        
+                    <a href="chat.php?annonce_id=<?=$annonce_id?>&user_id=<?=$user_id?>" class="send-message">Envoyer un message</a>
+                </div>
+        
+            <?php elseif (isset($error)) : ?>
+                <h2><?= $error ?></h2>
+            <?php endif ?>
+        </section>
+    </main>
 </body>
 </html>

@@ -1,7 +1,7 @@
 <?php
 
 $host = "localhost";
-$dbname = "leboncoin-1";
+$dbname = "leboncoin";
 $srv_username = "root";
 $srv_password = "";
 

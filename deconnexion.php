@@ -4,6 +4,6 @@ session_destroy();
 
 echo "Déconnexion...";
 
-header('refresh:1; url=index.php')
+header('refresh:1; url=connexion.php')
 
 ?>
